@@ -1,3 +1,4 @@
+import re
 import tkinter as tk
 from tkinter import ttk, messagebox
 from dataclasses import asdict
@@ -10,27 +11,35 @@ class JobProductionApp:
     def __init__(self, root):
         self.root = root
         self.root.title("UMAMCO Job Production Tracker")
-        self.root.geometry("840x680")
-        self.root.resizable(False, False)
+        self.root.geometry("740x680")
+        self.root.resizable(True, True)
 
         # Notebook (Tabs)
         notebook = ttk.Notebook(root)
         notebook.pack(expand=True, fill="both")
 
+        notebook.bind("<<NotebookTabChanged>>", self._on_tab_changed)
+
+
         # Frames for tabs
         self.frame_add_job = ttk.Frame(notebook)
         self.frame_view_jobs = ttk.Frame(notebook)
         self.frame_shift = ttk.Frame(notebook)
+        self.frame_staff = ttk.Frame(notebook)
+
 
         # add tabs once
-        notebook.add(self.frame_add_job, text="➕ Add Job")        # TAB -> 1
-        notebook.add(self.frame_view_jobs, text="📋 View Jobs")    # TAB -> 2
-        notebook.add(self.frame_shift, text="🕒 Shift & Output")   # TAB -> 3
+        notebook.add(self.frame_add_job, text="➕ Add Job")        # Jobs tab
+        notebook.add(self.frame_view_jobs, text="📋 View Jobs")    # View Jobs tab
+        notebook.add(self.frame_shift, text="🕒 Shift & Output")   # Shift & Output tab
+        notebook.add(self.frame_staff, text="👥 Staff Management") # Staff management tab
 
-        # build all tabs
+        # Tabs build in the application lined up here.
         self._build_add_job_tab()
         self._build_view_jobs_tab()
         self._build_shift_tab()
+        self._build_staff_tab()
+
 
     # ------------------- ADD JOB TAB -------------------
     def _build_add_job_tab(self):
@@ -64,10 +73,10 @@ class JobProductionApp:
             e.delete(0, tk.END)
 
     def save_job(self):
-        job_number = self.entry_job_number.get().strip()
-        customer_name = self.entry_customer_name.get().strip()
-        product = self.entry_product.get().strip()
-        stock_name = self.entry_stock_name.get().strip()
+        job_number = self.entry_job_number.get().upper().strip()
+        customer_name = self.entry_customer_name.get().title().strip()
+        product = self.entry_product.get().title().strip()
+        stock_name = self.entry_stock_name.get().title().strip()
         stock_quantity = self.entry_stock_quantity.get().strip()
 
         if not (job_number and customer_name and product and stock_name and stock_quantity):
@@ -164,8 +173,10 @@ class JobProductionApp:
         self._load_job_numbers_into_combobox()
 
         ttk.Label(hdr, text="Staff Name").grid(row=0, column=2, sticky="w", padx=6, pady=4)
-        self.entry_staff_name = ttk.Entry(hdr, width=20)
-        self.entry_staff_name.grid(row=0, column=3, padx=6, pady=4)
+        self.cmb_staff_name = ttk.Combobox(hdr, width=20, state="readonly")
+        self.cmb_staff_name.grid(row=0, column=3, padx=6, pady=4)
+        self._load_active_staff_into_combobox()
+
 
         ttk.Label(hdr, text="Date").grid(row=1, column=0, sticky="w", padx=6, pady=4)
         self.entry_shift_date = ttk.Entry(hdr, width=18)
@@ -238,6 +249,18 @@ class JobProductionApp:
         if job_numbers:
             self.cmb_job_number.set(job_numbers[0])
 
+    def _load_active_staff_into_combobox(self):
+        """Load only active staff into the Shift tab dropdown."""
+        staff_list = load_json("data/staff.json", default=[])
+        active_staff = [s["name"] for s in staff_list if s.get("status") == "Active"]
+
+        self.cmb_staff_name["values"] = active_staff
+        if active_staff:
+            self.cmb_staff_name.set(active_staff[0])
+        else:
+            self.cmb_staff_name.set("")
+
+    
     # ---------- NEW: auto-generate hours ----------
     def _generate_hours(self):
         """Auto-fill shift_hours based on start/end time, with break-aware targets."""
@@ -443,7 +466,7 @@ class JobProductionApp:
 
     def _save_shift_record(self):
         job_number = self.cmb_job_number.get().strip()
-        staff_name = self.entry_staff_name.get().strip()
+        staff_name = self.cmb_staff_name.get().title().strip()
         shift_date = self.entry_shift_date.get().strip()
         start_time = self.entry_start_time.get().strip()
         end_time = self.entry_end_time.get().strip()
@@ -487,3 +510,167 @@ class JobProductionApp:
         messagebox.showinfo("Saved", f"Shift saved.\nTotal Output: {total}")
         self.shift_hours = []
         self._refresh_hour_tree()
+
+
+    def _generate_staff_id(self):
+        """Generate next staff ID like STF001."""
+        staff_list = load_json("data/staff.json", default=[])
+        if not staff_list:
+            return "STF001"
+        last_id = max(int(s["staff_id"][3:]) for s in staff_list)
+        return f"STF{last_id+1:03d}"
+
+    def _is_valid_name(self, name):
+        """Return True if staff name has only letters and spaces."""
+        return bool(re.match(r"^[A-Za-z\s]+$", name))
+
+    def _add_staff(self):
+        """Add a new staff record."""
+        name = self.entry_staff_name_new.get().title().strip()
+        role = self.cmb_role.get()
+        shift_type = self.cmb_shift_type_staff.get()
+        status = self.cmb_status.get()
+
+        if not name:
+            messagebox.showwarning("Missing Data", "Please enter the staff name.")
+            return
+
+        if not self._is_valid_name(name):
+            messagebox.showwarning("Invalid Name", "Name must contain only letters and spaces.")
+            return
+
+        staff = {
+            "staff_id": self._generate_staff_id(),
+            "name": name,
+            "role": role,
+            "shift_type": shift_type,
+            "status": status,
+            "date_joined": date.today().isoformat()
+        }
+
+        db = load_json("data/staff.json", default=[])
+        db.append(staff)
+        save_json("data/staff.json", db)
+
+        messagebox.showinfo("Success", f"Staff '{name}' added successfully.")
+        self.entry_staff_name_new.delete(0, tk.END)
+        self._load_staff_into_tree()
+
+    def _on_tab_changed(self, event):
+        """Refresh relevant data when switching tabs."""
+        selected_tab = event.widget.tab(event.widget.select(), "text")
+
+        if selected_tab == "🕒 Shift & Output":
+            # Refresh staff and job lists dynamically
+            self._load_active_staff_into_combobox()
+            self._load_job_numbers_into_combobox()
+
+        elif selected_tab == "👥 Staff Management":
+            # Auto-refresh staff list when tab is opened
+            self._load_staff_into_tree()
+
+    def _build_staff_tab(self):
+        frame = self.frame_staff
+        ttk.Label(frame, text="Staff Management", font=("Segoe UI", 14, "bold")).pack(pady=10)
+
+        # ==== Top Form ====
+        form = ttk.LabelFrame(frame, text="Register New Staff")
+        form.pack(fill="x", padx=10, pady=10)
+
+        ttk.Label(form, text="Name").grid(row=0, column=0, padx=5, pady=4, sticky="w")
+        self.entry_staff_name_new = ttk.Entry(form, width=25)
+        self.entry_staff_name_new.grid(row=0, column=1, padx=5, pady=4)
+
+        ttk.Label(form, text="Role").grid(row=0, column=2, padx=5, pady=4, sticky="w")
+        self.cmb_role = ttk.Combobox(form, values=["Team Leader", "Operator", "Supervisor"], state="readonly", width=18)
+        self.cmb_role.set("Team Leader")
+        self.cmb_role.grid(row=0, column=3, padx=5, pady=4)
+
+        ttk.Label(form, text="Shift Type").grid(row=1, column=0, padx=5, pady=4, sticky="w")
+        self.cmb_shift_type_staff = ttk.Combobox(form, values=["Morning", "Afternoon", "Night"], state="readonly", width=18)
+        self.cmb_shift_type_staff.set("Morning")
+        self.cmb_shift_type_staff.grid(row=1, column=1, padx=5, pady=4)
+
+        ttk.Label(form, text="Status").grid(row=1, column=2, padx=5, pady=4, sticky="w")
+        self.cmb_status = ttk.Combobox(form, values=["Active", "Inactive"], state="readonly", width=18)
+        self.cmb_status.set("Active")
+        self.cmb_status.grid(row=1, column=3, padx=5, pady=4)
+
+        ttk.Button(form, text="➕ Add Staff", command=self._add_staff).grid(row=2, column=3, padx=5, pady=(10, 6))
+
+        # ==== Staff Directory Table ====
+        sec = ttk.LabelFrame(frame, text="Staff Directory")
+        sec.pack(fill="both", expand=True, padx=10, pady=10)
+
+        columns = ("id", "name", "role", "shift_type", "status", "date_joined")
+        self.staff_tree = ttk.Treeview(sec, columns=columns, show="headings", height=10)
+        for col, width in zip(columns, (80, 150, 120, 100, 90, 120)):
+            self.staff_tree.heading(col, text=col.replace("_", " ").title())
+            self.staff_tree.column(col, width=width, anchor="center")
+        self.staff_tree.pack(fill="x", padx=6, pady=6)
+
+        # ==== Buttons below table ====
+        btns = ttk.Frame(sec)
+        btns.pack(side="top", pady=6)
+        ttk.Button(btns, text="🟢 Activate", command=self._activate_staff).grid(row=0, column=0, padx=5)
+        ttk.Button(btns, text="🔴 Deactivate", command=self._deactivate_staff).grid(row=0, column=1, padx=5)
+        ttk.Button(btns, text="❌ Delete", command=self._delete_staff).grid(row=0, column=2, padx=5)
+        ttk.Button(btns, text="🔄 Refresh", command=self._load_staff_into_tree).grid(row=0, column=3, padx=5)
+
+        self._load_staff_into_tree()
+
+
+    def _load_staff_into_tree(self):
+        """Load all staff into table."""
+        for r in self.staff_tree.get_children():
+            self.staff_tree.delete(r)
+
+        db = load_json("data/staff.json", default=[])
+        for s in db:
+            self.staff_tree.insert("", tk.END, values=(
+                s["staff_id"], s["name"], s["role"], s["shift_type"], s["status"], s["date_joined"]
+            ))
+
+    def _get_selected_staff(self):
+        """Return selected staff ID, or None."""
+        sel = self.staff_tree.selection()
+        if not sel:
+            messagebox.showwarning("No Selection", "Please select a staff record.")
+            return None
+        vals = self.staff_tree.item(sel[0], "values")
+        return vals[0]  # staff_id
+
+    def _activate_staff(self):
+        self._change_staff_status("Active")
+
+    def _deactivate_staff(self):
+        self._change_staff_status("Inactive")
+
+    def _change_staff_status(self, new_status):
+        staff_id = self._get_selected_staff()
+        if not staff_id:
+            return
+
+        db = load_json("data/staff.json", default=[])
+        for s in db:
+            if s["staff_id"] == staff_id:
+                s["status"] = new_status
+                break
+
+        save_json("data/staff.json", db)
+        self._load_staff_into_tree()
+        messagebox.showinfo("Status Updated", f"Staff {staff_id} set to {new_status}.")
+
+    def _delete_staff(self):
+        staff_id = self._get_selected_staff()
+        if not staff_id:
+            return
+        confirm = messagebox.askyesno("Confirm Delete", f"Delete staff {staff_id}?")
+        if not confirm:
+            return
+
+        db = load_json("data/staff.json", default=[])
+        db = [s for s in db if s["staff_id"] != staff_id]
+        save_json("data/staff.json", db)
+        self._load_staff_into_tree()
+        messagebox.showinfo("Deleted", f"Staff {staff_id} removed.")
