@@ -1,4 +1,14 @@
-# handles all reading/writing to your JSON data files (jobs, staff, logs).
+# ==============================================================
+#  FILE: json_store.py
+#  PROJECT: UMAMCO Job Production Tracker
+#  AUTHOR: Amin Umar (alias: Jack)
+#  DESCRIPTION:
+#     This module provides utility functions to load and save JSON data
+#     to and from files, ensuring proper directory structure and error handling.
+#  CREATED ON: 29th November 2025
+#  LAST UPDATED: 2nd November 2025
+# Status: Stable, but needs modification as codebase evolves.
+# ==============================================================
 
 import json
 import os
