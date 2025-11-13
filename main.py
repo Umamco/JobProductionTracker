@@ -2,7 +2,7 @@ import sys, os
 sys.path.append(os.path.dirname(__file__))
 
 import tkinter as tk
-from ui.main_window import JobProductionApp
+from main_window import JobProductionApp
 
 
 def main():
