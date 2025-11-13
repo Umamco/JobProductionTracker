@@ -5,6 +5,7 @@ import os
 # List of JSON files data to clear when executed.
 FILES_TO_CLEAR = [
     "data/jobs.json",
+    "data/production.json",
     "data/staff.json",
     "data/shift_output.json"
 ]

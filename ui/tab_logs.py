@@ -15,7 +15,7 @@ from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
-from storage.json_store import load_json, save_json
+from storage.json_store import load_json
 
 
 class LogsTab:
@@ -28,7 +28,8 @@ class LogsTab:
     # ------------------- BUILD LOG TAB -------------------
     def _build_logs_tab(self):
         frame = self.frame
-        ttk.Label(frame, text="Production Logs & Reports", font=("Segoe UI", 14, "bold")).pack(pady=10)
+        ttk.Label(frame, text="Production Logs & Reports",
+                  font=("Segoe UI", 14, "bold")).pack(pady=10)
 
         # ==== Filter Section ====
         filter_frame = ttk.LabelFrame(frame, text="Filter Options")
@@ -47,7 +48,7 @@ class LogsTab:
         self.entry_log_date.insert(0, date.today().isoformat())
         self.entry_log_date.grid(row=0, column=5, padx=5, pady=4)
 
-        # Buttons for report actions
+        # Buttons
         btn_frame = ttk.Frame(filter_frame)
         btn_frame.grid(row=0, column=6, padx=5, pady=4)
         ttk.Button(btn_frame, text="🔍 Load Report", command=self._load_logs_to_tree).pack(side="left", padx=3)
@@ -60,22 +61,24 @@ class LogsTab:
 
         columns = ("date", "job", "staff", "shift", "output", "target", "progress", "status")
         self.logs_tree = ttk.Treeview(sec, columns=columns, show="headings", height=12)
+
         for col, width in zip(columns, (100, 100, 140, 80, 90, 90, 100, 80)):
             self.logs_tree.heading(col, text=col.upper())
             self.logs_tree.column(col, width=width, anchor="center")
+
         self.logs_tree.pack(fill="both", expand=True, padx=6, pady=6)
 
+        # Color tags
         self.logs_tree.tag_configure("low", foreground="red")
         self.logs_tree.tag_configure("mid", foreground="orange")
         self.logs_tree.tag_configure("ok", foreground="green")
 
         # ==== Summary ====
-        self.lbl_summary = ttk.Label(
-            frame, text="Total Shifts: 0 | Total Output: 0 units", font=("Segoe UI", 10, "bold")
-        )
+        self.lbl_summary = ttk.Label(frame, text="Total Shifts: 0 | Total Output: 0 units",
+                                     font=("Segoe UI", 10, "bold"))
         self.lbl_summary.pack(pady=8)
 
-        # ==== Job Progress Summary ====
+        # ==== Job Progress ====
         progress_frame = ttk.LabelFrame(frame, text="Job Completion Progress")
         progress_frame.pack(fill="x", padx=10, pady=10)
 
@@ -89,12 +92,11 @@ class LogsTab:
         self.lbl_job_progress = ttk.Label(progress_frame, text="Progress: 0%")
         self.lbl_job_progress.pack(pady=(2, 4))
 
-        # Load initial dropdown values
+        # Load dropdown values
         self._refresh_filters()
 
     # ------------------- REFRESH FILTERS -------------------
     def _refresh_filters(self):
-        """Reload available jobs and staff names for filters."""
         jobs = load_json("data/jobs.json", default=[])
         staff = load_json("data/staff.json", default=[])
 
@@ -104,20 +106,18 @@ class LogsTab:
         self.cmb_log_job["values"] = job_numbers
         self.cmb_log_staff["values"] = staff_names
 
-        if job_numbers:
-            self.cmb_log_job.set("")
-        if staff_names:
-            self.cmb_log_staff.set("")
+        self.cmb_log_job.set("")
+        self.cmb_log_staff.set("")
 
     # ------------------- LOAD FILTERED LOGS -------------------
     def _load_logs_to_tree(self):
-        """Load and filter shift records into the table."""
         for r in self.logs_tree.get_children():
             self.logs_tree.delete(r)
 
         all_shifts = load_json("data/shift_output.json", default=[])
         jobs = load_json("data/jobs.json", default=[])
-        job_targets = {j["job_number"]: j["stocks"][0]["quantity"] for j in jobs if j.get("stocks")}
+        job_targets = {j["job_number"]: j["stocks"][0]["quantity"]
+                       for j in jobs if j.get("stocks")}
 
         filter_job = self.cmb_log_job.get().strip()
         filter_staff = self.cmb_log_staff.get().strip()
@@ -126,7 +126,7 @@ class LogsTab:
         total_output = 0
         count = 0
 
-        # --- Compute job completion ---
+        # --- Progress Bar Logic ---
         if filter_job:
             job_entry = next((j for j in jobs if j["job_number"] == filter_job), None)
             if job_entry and job_entry.get("stocks"):
@@ -135,16 +135,18 @@ class LogsTab:
 
                 job_shifts = [s for s in all_shifts if s["job_number"] == filter_job]
                 total_job_output = sum(s["total_output"] for s in job_shifts)
-                progress_pct = round((total_job_output / job_target) * 100, 2) if job_target else 0
+                pct = round((total_job_output / job_target) * 100, 2) if job_target else 0
 
-                self.progress_var.set(progress_pct)
-                self.lbl_job_progress.config(text=f"Progress: {progress_pct}% ({total_job_output:,} / {job_target:,})")
+                self.progress_var.set(pct)
+                self.lbl_job_progress.config(
+                    text=f"Progress: {pct}% ({total_job_output:,} / {job_target:,})"
+                )
 
                 style = ttk.Style()
-                if progress_pct < 80:
+                if pct < 80:
                     style.configure("Red.Horizontal.TProgressbar", background="red")
                     self.progress_bar.config(style="Red.Horizontal.TProgressbar")
-                elif progress_pct < 95:
+                elif pct < 95:
                     style.configure("Yellow.Horizontal.TProgressbar", background="orange")
                     self.progress_bar.config(style="Yellow.Horizontal.TProgressbar")
                 else:
@@ -155,13 +157,26 @@ class LogsTab:
         else:
             self._reset_progress_labels()
 
-        # --- Load filtered logs ---
+        # --- Flexible Date Filter ---
+        def match_date(shift_date: str) -> bool:
+            if not filter_date:
+                return True
+            if len(filter_date) == 4:   # YYYY
+                return shift_date.startswith(filter_date)
+            if len(filter_date) == 7:   # YYYY-MM
+                return shift_date.startswith(filter_date)
+            return shift_date == filter_date  # YYYY-MM-DD
+
+        # --- Load Records ---
         for shift in all_shifts:
+
             if filter_job and shift["job_number"] != filter_job:
                 continue
+
             if filter_staff and shift["staff_name"] != filter_staff:
                 continue
-            if filter_date and shift["shift_date"] != filter_date:
+
+            if not match_date(shift["shift_date"]):
                 continue
 
             job = shift["job_number"]
@@ -188,14 +203,12 @@ class LogsTab:
 
     # ------------------- RESET PROGRESS -------------------
     def _reset_progress_labels(self):
-        """Reset progress and target display."""
         self.lbl_job_target.config(text="Total Target: N/A")
         self.lbl_job_progress.config(text="Progress: 0%")
         self.progress_var.set(0)
 
     # ------------------- EXPORT TO CSV -------------------
     def _export_logs_to_csv(self):
-        """Export current log data to CSV file."""
         if not self.logs_tree.get_children():
             messagebox.showwarning("No Data", "No logs available to export.")
             return
@@ -208,16 +221,17 @@ class LogsTab:
                 writer = csv.writer(f)
                 headers = [col.upper() for col in self.logs_tree["columns"]]
                 writer.writerow(headers)
+
                 for row_id in self.logs_tree.get_children():
                     writer.writerow(self.logs_tree.item(row_id, "values"))
 
-            messagebox.showinfo("Export Successful", f"Report exported to:\n{os.path.abspath(filename)}")
+            messagebox.showinfo("Export Successful",
+                                f"Report exported to:\n{os.path.abspath(filename)}")
         except Exception as e:
             messagebox.showerror("Error", f"CSV export failed:\n{e}")
 
     # ------------------- EXPORT TO PDF -------------------
     def _export_logs_to_pdf(self):
-        """Export the current log table to PDF."""
         if not self.logs_tree.get_children():
             messagebox.showwarning("No Data", "No logs available to export.")
             return
@@ -244,7 +258,10 @@ class LogsTab:
             elements.append(Spacer(1, 12))
 
             headers = [col.upper() for col in self.logs_tree["columns"]]
-            data = [headers] + [self.logs_tree.item(r, "values") for r in self.logs_tree.get_children()]
+            data = [headers] + [
+                self.logs_tree.item(r, "values")
+                for r in self.logs_tree.get_children()
+            ]
 
             table = Table(data)
             table.setStyle(TableStyle([
@@ -253,14 +270,17 @@ class LogsTab:
                 ("ALIGN", (0, 0), (-1, -1), "CENTER"),
                 ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
                 ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
-                ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.whitesmoke, colors.lightgrey]),
+                ("ROWBACKGROUNDS", (0, 1), (-1, -1),
+                 [colors.whitesmoke, colors.lightgrey]),
             ]))
+
             elements.append(table)
             elements.append(Spacer(1, 12))
             elements.append(Paragraph(self.lbl_summary.cget("text"), styles["Italic"]))
 
             doc.build(elements)
-            messagebox.showinfo("Export Successful", f"PDF report saved to:\n{os.path.abspath(filename)}")
+
+            messagebox.showinfo("Export Successful",
+                                f"PDF report saved to:\n{os.path.abspath(filename)}")
         except Exception as e:
             messagebox.showerror("Error", f"PDF export failed:\n{e}")
-
