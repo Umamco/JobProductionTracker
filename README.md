@@ -71,6 +71,22 @@ job_production_tracker/
 │
 └── reset_data.py               # Wipes all JSON files (with confirmation)
 ```
+---
+
+## 📘 Note About `production.json`
+
+The file **`production.json`** is included for future enhancements but is **not yet used in Version 1.0**.  
+It will normally remain empty.
+
+It is reserved for upcoming features in Version 1.1+, such as:
+
+- Monthly or weekly production summaries  
+- Full factory performance analytics  
+- Aggregated job lifecycle data  
+- High-level KPI tracking  
+- Advanced reporting modules
+
+Including this file now ensures smooth forward-compatibility when new features are added.
 
 ---
 
@@ -91,8 +107,14 @@ job_production_tracker/
 ### **📊 Production Logs**
 ![Logs](screenshots/logs.png)
 
+### **⚠️ Production Logs/Erase Button
+![Logs](screenshots/erase.png)
+
 ### **📈 Dashboard**
 ![Dashboard](screenshots/dashboard.png)
+
+### ** Dashboard Data Requirements **
+![Requirements](screenshots/requirements.png)
 
 ---
 
