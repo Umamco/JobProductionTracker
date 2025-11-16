@@ -1,0 +1,246 @@
+[
+  {
+    "shift_id": "950100-2025-10-14-0600",
+    "job_number": "950100",
+    "staff_name": "Amin Umar",
+    "shift_date": "2025-10-14",
+    "start_time": "06:00",
+    "end_time": "14:00",
+    "shift_type": "Morning",
+    "hourly_outputs": [
+      {
+        "hour_label": "06:00-07:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Smooth running"
+      },
+      {
+        "hour_label": "07:00-08:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Film changeover"
+      },
+      {
+        "hour_label": "08:00-09:00",
+        "quantity": 2800,
+        "target": 2500,
+        "comment": "Running well"
+      },
+      {
+        "hour_label": "09:00-10:00",
+        "quantity": 2900,
+        "target": 1667,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "10:00-11:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "11:00-12:00",
+        "quantity": 2300,
+        "target": 2500,
+        "comment": "Maintenance"
+      },
+      {
+        "hour_label": "12:00-13:00",
+        "quantity": 2300,
+        "target": 1875,
+        "comment": "Stock finished"
+      },
+      {
+        "hour_label": "13:00-14:00",
+        "quantity": 2400,
+        "target": 2500,
+        "comment": "Coder issue"
+      }
+    ],
+    "total_output": 20200,
+    "timestamp": "2025-11-14T07:52:47.091488+00:00"
+  },
+  {
+    "shift_id": "950100-2025-10-14-0600",
+    "job_number": "950100",
+    "staff_name": "Amin Umar",
+    "shift_date": "2025-11-14",
+    "start_time": "06:00",
+    "end_time": "14:00",
+    "shift_type": "Morning",
+    "hourly_outputs": [
+      {
+        "hour_label": "06:00-07:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Smooth running"
+      },
+      {
+        "hour_label": "07:00-08:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Film changeover"
+      },
+      {
+        "hour_label": "08:00-09:00",
+        "quantity": 2800,
+        "target": 2500,
+        "comment": "Running well"
+      },
+      {
+        "hour_label": "09:00-10:00",
+        "quantity": 2900,
+        "target": 1667,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "10:00-11:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "11:00-12:00",
+        "quantity": 2300,
+        "target": 2500,
+        "comment": "Maintenance"
+      },
+      {
+        "hour_label": "12:00-13:00",
+        "quantity": 2300,
+        "target": 1875,
+        "comment": "Stock finished"
+      },
+      {
+        "hour_label": "13:00-14:00",
+        "quantity": 2400,
+        "target": 2900,
+        "comment": "Coder issue"
+      }
+    ],
+    "total_output": 20200,
+    "timestamp": "2025-11-14T07:52:47.091488+00:00"
+  },
+  {
+    "shift_id": "950100-2025-08-14-0600",
+    "job_number": "950100",
+    "staff_name": "Wahab Ahmed",
+    "shift_date": "2025-10-14",
+    "start_time": "06:00",
+    "end_time": "14:00",
+    "shift_type": "Morning",
+    "hourly_outputs": [
+      {
+        "hour_label": "06:00-07:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Smooth running"
+      },
+      {
+        "hour_label": "07:00-08:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Film changeover"
+      },
+      {
+        "hour_label": "08:00-09:00",
+        "quantity": 2800,
+        "target": 2500,
+        "comment": "Running well"
+      },
+      {
+        "hour_label": "09:00-10:00",
+        "quantity": 2900,
+        "target": 1667,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "10:00-11:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "11:00-12:00",
+        "quantity": 2300,
+        "target": 2500,
+        "comment": "Maintenance"
+      },
+      {
+        "hour_label": "12:00-13:00",
+        "quantity": 2300,
+        "target": 1875,
+        "comment": "Stock finished"
+      },
+      {
+        "hour_label": "13:00-14:00",
+        "quantity": 2400,
+        "target": 2500,
+        "comment": "Coder issue"
+      }
+    ],
+    "total_output": 20200,
+    "timestamp": "2025-11-14T07:52:47.091488+00:00"
+  },
+  {
+    "shift_id": "950100-2025-06-14-0600",
+    "job_number": "950100",
+    "staff_name": "Wahab Ahmed",
+    "shift_date": "2025-11-14",
+    "start_time": "06:00",
+    "end_time": "14:00",
+    "shift_type": "Morning",
+    "hourly_outputs": [
+      {
+        "hour_label": "06:00-07:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Smooth running"
+      },
+      {
+        "hour_label": "07:00-08:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Film changeover"
+      },
+      {
+        "hour_label": "08:00-09:00",
+        "quantity": 2800,
+        "target": 2500,
+        "comment": "Running well"
+      },
+      {
+        "hour_label": "09:00-10:00",
+        "quantity": 2900,
+        "target": 1667,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "10:00-11:00",
+        "quantity": 2500,
+        "target": 2500,
+        "comment": "Running"
+      },
+      {
+        "hour_label": "11:00-12:00",
+        "quantity": 2300,
+        "target": 2500,
+        "comment": "Maintenance"
+      },
+      {
+        "hour_label": "12:00-13:00",
+        "quantity": 2300,
+        "target": 1875,
+        "comment": "Stock finished"
+      },
+      {
+        "hour_label": "13:00-14:00",
+        "quantity": 2400,
+        "target": 2900,
+        "comment": "Coder issue"
+      }
+    ],
+    "total_output": 20200,
+    "timestamp": "2025-11-14T07:52:47.091488+00:00"
+  }
+]

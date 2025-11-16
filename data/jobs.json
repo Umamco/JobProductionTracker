@@ -1,0 +1,86 @@
+[
+  {
+    "job_number": "950100",
+    "customer_name": "M&S",
+    "product": "Percy Piglets 28G",
+    "stocks": [
+      {
+        "name": "Piglet Sweet",
+        "quantity": 50000
+      }
+    ],
+    "status": "Pending",
+    "date_created": "2025-11-14T07:41:44.829871+00:00",
+    "date_updated": null
+  },
+  {
+    "job_number": "950221",
+    "customer_name": "M&S",
+    "product": "Percy Piglet Value Pack 10",
+    "stocks": [
+      {
+        "name": "Percy Piglets Sweets",
+        "quantity": 60000
+      }
+    ],
+    "status": "Pending",
+    "date_created": "2025-11-14T07:44:26.496368+00:00",
+    "date_updated": null
+  },
+  {
+    "job_number": "950300",
+    "customer_name": "M&S",
+    "product": "Percy Piglets 75g",
+    "stocks": [
+      {
+        "name": "Piglet Sweet",
+        "quantity": 50000
+      }
+    ],
+    "status": "Pending",
+    "date_created": "2025-11-14T07:41:44.829871+00:00",
+    "date_updated": null
+  },
+  {
+    "job_number": "950555",
+    "customer_name": "M&S",
+    "product": "Percy Piglet Value Pack 10",
+    "stocks": [
+      {
+        "name": "Percy Piglets Sweets",
+        "quantity": 60000
+      }
+    ],
+    "status": "Pending",
+    "date_created": "2025-11-14T07:44:26.496368+00:00",
+    "date_updated": null
+  },
+  {
+    "job_number": "950666",
+    "customer_name": "M&S",
+    "product": "Coated Raisin Strip 150g",
+    "stocks": [
+      {
+        "name": "Raisin Strips",
+        "quantity": 50000
+      }
+    ],
+    "status": "Pending",
+    "date_created": "2025-11-14T07:41:44.829871+00:00",
+    "date_updated": null
+  },
+  {
+    "job_number": "952210",
+    "customer_name": "M&S",
+    "product": "Coated Raisins 150g",
+    "stocks": [
+      {
+        "name": "Belgium Raisn",
+        "quantity": 60000
+      }
+    ],
+    "status": "Pending",
+    "date_created": "2025-11-14T07:44:26.496368+00:00",
+    "date_updated": null
+  }
+]

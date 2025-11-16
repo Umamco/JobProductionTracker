@@ -15,5 +15,5 @@ Thumbs.db
 *.tmp
 
 # Ignore local test data (optional)
-data/*.json
+# data/*.json
 !data/.gitkeep
