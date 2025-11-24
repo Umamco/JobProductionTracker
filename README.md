@@ -86,7 +86,6 @@ It is reserved for upcoming features in Version 1.1+, such as:
 - High-level KPI tracking  
 - Advanced reporting modules
 
-Including this file now ensures smooth forward-compatibility when new features are added.
 
 ---
 
@@ -115,6 +114,10 @@ Including this file now ensures smooth forward-compatibility when new features a
 
 ### ** Dashboard Data Requirements **
 ![Requirements](screenshots/requirements.png)
+
+
+### 🎬 Video Demonstration
+[![Video Demo](screenshots/video_thumbnail.png)](https://1drv.ms/f/c/0bac7ab076f77651/IgBhtMIy_REJQ43lkuOqKo77ASmzxfG96bNaXD030FUKjeY?e=Acb6Wc)
 
 ---
 
